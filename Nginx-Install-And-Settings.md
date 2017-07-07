@@ -199,6 +199,42 @@ exit $RETVAL
 - 重启服务：`service nginx restart`
 
 
+## Nginx 全局变量
+
+- $arg_PARAMETER #这个变量包含GET请求中，如果有变量PARAMETER时的值。
+- $args #这个变量等于请求行中(GET请求)的参数，例如foo=123&bar=blahblah;
+- $binary_remote_addr #二进制的客户地址。
+- $body_bytes_sent #响应时送出的body字节数数量。即使连接中断，这个数据也是精确的。
+- $content_length #请求头中的Content-length字段。
+- $content_type #请求头中的Content-Type字段。
+- $cookie_COOKIE #cookie COOKIE变量的值
+- $document_root #当前请求在root指令中指定的值。
+- $document_uri #与$uri相同。
+- $host #请求主机头字段，否则为服务器名称。
+- $hostname #Set to the machine’s hostname as returned by gethostname
+- $http_HEADER
+- $is_args #如果有$args参数，这个变量等于”?”，否则等于”"，空值。
+- $http_user_agent #客户端agent信息
+- $http_cookie #客户端cookie信息
+- $limit_rate #这个变量可以限制连接速率。
+- $query_string #与$args相同。
+- $request_body_file #客户端请求主体信息的临时文件名。
+- $request_method #客户端请求的动作，通常为GET或POST。
+- $remote_addr #客户端的IP地址。
+- $remote_port #客户端的端口。
+- $remote_user #已经经过Auth Basic Module验证的用户名。
+- $request_completion #如果请求结束，设置为OK. 当请求未结束或如果该请求不是请求链串的最后一个时，为空(Empty)。
+- $request_method #GET或POST
+- $request_filename #当前请求的文件路径，由root或alias指令与URI请求生成。
+- $request_uri #包含请求参数的原始URI，不包含主机名，如：”/foo/bar.php?arg=baz”。不能修改。
+- $scheme #HTTP方法（如http，https）。
+- $server_protocol #请求使用的协议，通常是HTTP/1.0或HTTP/1.1。
+- $server_addr #服务器地址，在完成一次系统调用后可以确定这个值。
+- $server_name #服务器名称。
+- $server_port #请求到达服务器的端口号。
+- $uri #不带请求参数的当前URI，$uri不包含主机名，如”/foo/bar.html”。该值有可能和$request_uri 不一致。
+- $request_uri是浏览器发过来的值。该值是rewrite后的值。例如做了internal redirects后。
+
 ## Nginx 配置
 
 - Nginx 默认配置文件：`vim /usr/local/nginx/conf/nginx.conf`
@@ -206,6 +242,7 @@ exit $RETVAL
 ### Nginx 在 1.8.1 版本下的默认配置（去掉注释）
 
 ``` nginx
+user root;#我这里习惯使用 root，所以这里需要这样设置。如果你有为你的 nginx 专门配置一个用户，这里需要改为你的用户
 worker_processes  1;
 
 events {
@@ -243,6 +280,7 @@ http {
 - 设置两个虚拟主机（通过**端口**来区分开）
 
 ``` nginx
+user root;#我这里习惯使用 root，所以这里需要这样设置。如果你有为你的 nginx 专门配置一个用户，这里需要改为你的用户
 worker_processes  1;
 
 events {
@@ -295,6 +333,7 @@ http {
 - 设置两个虚拟主机（通过**域名**来区分开）
 
 ``` nginx
+user root;#我这里习惯使用 root，所以这里需要这样设置。如果你有为你的 nginx 专门配置一个用户，这里需要改为你的用户
 worker_processes  1;
 
 events {
@@ -356,6 +395,7 @@ http {
 - Nginx 配置：
 
 ``` nginx
+user root;#我这里习惯使用 root，所以这里需要这样设置。如果你有为你的 nginx 专门配置一个用户，这里需要改为你的用户
 worker_processes  1;
 
 events {
@@ -451,6 +491,66 @@ limit_conn slimits 5;
 
 
 
+## 使用 logrotate 做 nginx 日志轮询分割
+
+- 前提：
+	- 我 nginx 的成功日志路径：/var/log/nginx/access.log
+	- 我 nginx 的错误日志路径：/var/log/nginx/error.log
+	- pid 路径：/var/local/nginx/nginx.pid
+
+- 一般情况 CentOS 是装有：logrotate，你可以检查下：`rpm -ql logrotate`，如果有相应结果，则表示你也装了。
+- logrotate 配置文件一般在：
+	- 全局配置：/etc/logrotate.conf 通用配置文件，可以定义全局默认使用的选项。
+	- 自定义配置，放在这个目录下的都算是：/etc/logrotate.d/
+
+- 针对 nginx 创建自定义的配置文件：`vim /etc/logrotate.d/nginx`
+- 文件内容如下：
+
+``` ini
+
+/var/log/nginx/access.log /var/log/nginx/error.log {
+	create 644 root root
+	notifempty
+	daily
+	rotate 15
+	missingok
+	dateext
+	sharedscripts
+	postrotate
+	    if [ -f /var/local/nginx/nginx.pid ]; then
+	        kill -USR1 `cat /var/local/nginx/nginx.pid`
+	    fi
+	endscript
+}
+
+```
+
+- /var/log/nginx/access.log /var/log/nginx/error.log：多个文件用空格隔开，也可以用匹配符：/var/log/nginx/*.log
+- notifempty：如果是空文件的话，不转储
+- create 644 root root：create mode owner group 转储文件，使用指定的文件模式创建新的日志文件
+- 调用频率，有：daily，weekly，monthly可选
+- rotate 15：一次将存储15个归档日志。对于第16个归档，时间最久的归档将被删除。
+- sharedscripts：所有的日志文件都轮转完毕后统一执行一次脚本
+- missingok：如果日志文件丢失，不报错继续执行下一个
+- dateext：文件后缀是日期格式,也就是切割后文件是:xxx.log-20131216.gz 这样,如果注释掉,切割出来是按数字递增,即前面说的 xxx.log-1 这种格式
+- postrotate：执行命令的开始标志
+- endscripthttp:执行命令的结束标志
+- if 判断的意思不是中止Nginx的进程，而是传递给它信号重新生成日志，如果nginx没启动不做操作    
+- 更多参数可以看：<http://www.cnblogs.com/zengkefu/p/5498324.html>
+
+
+- 手动执行测试：`/usr/sbin/logrotate -vf /etc/logrotate.d/nginx`
+- 参数：‘-f’选项来强制logrotate轮循日志文件，‘-v’参数提供了详细的输出。
+- 验证是否手动执行成功，查看 cron 的日志即可：`grep logrotate /var/log/cron`
+- 设置 crontab 定时任务：`vim /etc/crontab`，添加下面内容：
+
+``` ini
+//每天02点10分执行一次
+10 02 * * *  /usr/sbin/logrotate -f /etc/logrotate.d/nginx
+```
+
+
+
 ### 杂七杂八
 
 - [nginx实现简体繁体字互转以及中文转拼音](https://www.ttlsa.com/nginx/nginx-modules-ngx_set_cconv/)
@@ -463,4 +563,5 @@ limit_conn slimits 5;
 
 - <https://help.aliyun.com/knowledge_detail/5974693.html?spm=5176.788314853.2.18.s4z1ra>
 - <http://www.ydcss.com/archives/466>
-
+- <http://blog.sae.sina.com.cn/archives/2107>
+- <http://www.nginx.cn/273.html>

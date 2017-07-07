@@ -7,7 +7,6 @@
 - Github 项目地址，欢迎 `Fork`、`Star`：<https://github.com/judasn/Linux-Tutorial>
 - 文章中用到的一些安装包归纳整理：<http://pan.baidu.com/s/1skAwrFn>
 - **学得越多越是明白一个人的力量是不够的，我只是起了一个引子，希望你能一起参与，真心希望！！！（鞠躬）**
-- 2016-06，这段期间自己在写一个项目，教程暂时无法继续更新，后面写好项目会再继续完善。
 
 ## 目录(Contents)
 
@@ -16,13 +15,16 @@
 - [Ubuntu 安装](Ubuntu-Install.md)
 - [Ubuntu 设置（目录）](ubuntu-settings/ubuntu-settings-toc.md)
 - [CentOS 介绍](CentOS.md)
-- [CentOS 安装](CentOS-Install.md)
+- [CentOS 6 安装](CentOS-Install.md)
+- [CentOS 7 安装](CentOS-7-Install.md)
+- [CentOS 6 和 CentOS 7 差异](CentOS6-and-CentOS7.md)
 - [CentOS 设置（目录）](centos-settings/centos-settings-toc.md)
 - [Ubuntu 安装 VMware](Ubuntu-Install-VMware.md)
 - [VMware 克隆 CentOS 后网卡信息修改](CentOS-Virtual-Machine-Copy-Settings.md)
 - [Vim 安装、配置、快捷键列表](Vim-Install-And-Settings.md)
 - [Bash 命令](Bash.md)
 - [Bash 其他常用命令](Bash-Other-Bash.md)
+- [Sed 命令](Sed.md)
 - [Linux 下常用压缩文件的解压、压缩](File-Extract-Compress.md)
 - [Yum 下载安装包及对应依赖包](Off-line-Yum-Install.md)
 - [Zsh 入门](Zsh.md)
@@ -45,8 +47,10 @@
 - [Nexus 安装和配置](Nexus-Install-And-Settings.md)
 - [MySQL 安装和配置](Mysql-Install-And-Settings.md)
 - [MySQL 优化](Mysql-Optimize.md)
+- [MySQL 测试](Mysql-Test.md)
 - [MySQL 教程](Mysql-Tutorial.md)
 - [Redis 安装和配置](Redis-Install-And-Settings.md)
+- [MongoDB 安装和配置](MongoDB-Install-And-Settings.md)
 - [Solr 安装和配置](Solr-Install-And-Settings.md)
 - [Jira 安装和配置](Jira-Install-And-Settings.md)
 - [Jenkins 安装和配置](Jenkins-Install-And-Settings.md)
@@ -60,6 +64,16 @@
 - [Nginx + Keepalived 高可用](Nginx-Keepalived-Install-And-Settings.md)
 - [黑客入侵检查](Was-Hacked.md)
 - [Shadowsocks 安装和配置](http://code.youmeek.com/2016/08/19/2016/08/VPS/)
+- [Mycat 安装和配置](Mycat-Install-And-Settings.md)
+- [Zookeeper 安装和配置](Zookeeper-Install.md)
+- [Daemontools 工具介绍](Daemontools.md)
+- [Tmux 安装和配置](Tmux-Install-And-Settings.md)
+- [ELK 日志收集系统安装和配置](ELK-Install-And-Settings.md)
+- [Dubbo 安装和配置](Dubbo-Install-And-Settings.md)
+- [GitLab 安装和配置](Gitlab-Install-And-Settings.md)
+- [Docker 安装和使用](Docker-Install-And-Usage.md)
+- [LDAP 安装和使用](LDAP-Install-And-Settings.md)
+- [Alfresco 安装和使用](Alfresco-Install-And-Usage.md)
 
 
 ## 下一步(Next)
@@ -67,13 +81,10 @@
 - Apache 安装和配置
 - LVS + Keepalived 高可用
 - MySQL + Keepalived 高可用
-- Zookeeper 安装和配置
 - ActiveMQ 服务安装和配置
-- GitLab 安装和配置
 - Zabbix 安装和配置
 - Nagios 安装和配置
 - Docker 安装和配置
-- Tmux 安装和配置
 - sed 学习
 - 常用脚本
 
@@ -108,3 +119,8 @@
 |作者(按参与时间排序)|地址|
 |:---------|:---------|
 |Judas.n|<http://code.YouMeek.com>|
+|nl101531|<https://github.com/nl101531>|
+
+## AD
+
+- [我个人开发的个性化定制网址导航：GitNavi.com](http://www.gitnavi.com)

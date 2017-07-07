@@ -102,23 +102,16 @@
 	- `find /opt -name .oh-my-zsh`，其中 /opt 代表目录名，.oh-my-zsh 代表搜索的是隐藏文件 / 文件夹名字为 oh-my-zsh 的
 	- `find /opt -type f -iname .oh-my-zsh`，其中 /opt 代表目录名，-type f 代表只找文件，.oh-my-zsh 代表搜索的是隐藏文件名字为 oh-my-zsh 的
 	- `find /opt -type d -iname .oh-my-zsh`，其中 /opt 代表目录名，-type d 代表只找目录，.oh-my-zsh 代表搜索的是隐藏文件夹名字为 oh-my-zsh 的
-	- `find . -name "lin*" -execls -l{}\;`，当前目录搜索lin开头的文件，然后用其搜索后的结果集，再执行ls -l的命令（这个命令可变，其他命令也可以），其中 -exec 和 {}\; 都是固定格式
+	- `find . -name "lin*" -exec ls -l {} \;`，当前目录搜索lin开头的文件，然后用其搜索后的结果集，再执行ls -l的命令（这个命令可变，其他命令也可以），其中 -exec 和 {} \; 都是固定格式
 	- `find /opt -type f -size +800M  -print0 | xargs -0 du -h | sort -nr`，找出 /opt 目录下大于 800 M 的文件
+	- `find / -name "*tower*" -exec rm {} \;`，找到文件并删除
 	- `du -hm --max-depth=2 | sort -nr | head -12`，找出系统中占用容量最大的前 12 个目录
 - `cat /etc/resolv.conf`，查看 DNS 设置
-- `netstat -tlunp`，查看当前运行的服务
-- ``，
-- ``，
-- ``，
-- ``，
-- ``，
-- ``，
-- ``，
-- ``，
-- ``，
-- ``，
-- ``，
-- ``，
+- `netstat -tlunp`，查看当前运行的服务，同时可以查看到：运行的程序已使用端口情况
+- `env`，查看所有系统变量
+- `export`，查看所有系统变量
+- `echo $JAVA_HOME`，查看指定系统变量的值，这里查看的是自己配置的 JAVA_HOME。
+- `unset $JAVA_HOME`，删除指定的环境变量
 
 
 ## 用户、权限-相关命令
@@ -126,12 +119,13 @@
 - `hostname`，查看当前登陆用户全名
 - `cat /etc/group`，查看所有组
 - `cat /etc/passwd`，查看所有用户
-- `useradd youmeek -p 123456`，添加一个名为 youmeek 的用户，还有一个同名的组
+- `groups youmeek`，查看 youmeek 用户属于哪个组
+- `useradd youmeek -g judasn`，添加用户并绑定到 judasn 组下
 - `userdel -r youmeek`，删除名字为 youmeek 的用户
 	- 参数：`-r`，表示删除用户的时候连同用户的家目录一起删除
 - 修改普通用户 youmeek 的权限跟 root 权限一样：
 	- 常用方法（原理是把该用户加到可以直接使用 sudo 的一个权限状态而已）：
-		- 编辑配置文件：``
+		- 编辑配置文件：`vim /etc/sudoers`
 		- 找到 98 行（预估），有一个：`root    ALL=(ALL)   ALL`，在这一行下面再增加一行，效果如下：
 
 		``` nginx
@@ -144,6 +138,7 @@
 		- 通过这两行对比，我们可以直接修改 youmeek 所在行的 UserId 值 和 GroupId 值，都改为 0。
 - `groupadd judasn`，添加一个名为 judasn 的用户组
 - `groupdel judasn`，删除一个名为 judasn 的用户组（前提：先删除组下面的所有用户）
+- `usermod 用户名 -g 组名`，把用户修改到其他组下
 - `passwd youmeek`，修改 youmeek 用户的密码（前提：只有 root 用户才有修改其他用户的权限，其他用户只能修改自己的）
 - `chmod 777 文件名/目录`，给指定文件增加最高权限，系统中的所有人都可以进行读写。
 	- linux 的权限分为 rwx。r 代表：可读，w 代表：可写，x 代表：可执行
@@ -171,13 +166,6 @@
 - `umount /newDir/`，卸载挂载，用目录名
 	- 如果这样卸载不了可以使用：`umount -l /newDir/`
 - `umount /dev/sdb5`，卸载挂载，用分区名
-
-
-
-
-
-
-
 
 
 
